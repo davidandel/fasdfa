@@ -1,0 +1,56 @@
+{% macro render_errors(errors) %}
+  {% if errors %}
+    <div>
+      {% for error in errors %}
+        <p class="form-error">{{ error }}</p>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endmacro %}
+
+{% macro render_input(name, value, label=None, type="text", disabled=False, readonly=False, errors=None, lc=None, rc=None) %}
+  {% if label %}
+    <label for="{{ name }}" class="control-label {{ lc if lc else '' }}">{{ label }}</label>
+  {% endif %}
+  <div class="{{ rc if rc else '' }}">
+    <input id="{{ name }}" type="{{ type }}" name="{{ name }}" value="{{ value|e }}" class="form-control {{ rc if rc else '' }}"
+           {{ "readonly" if readonly else "" }} {{ "disabled" if disabled else "" }}>
+    {{ render_errors(errors) }}
+  </div>
+{% endmacro %}
+
+{% macro render_checkbox(name, checked, label=None, disabled=False, errors=None, lc=None, rc=None) %}
+  <div class="{{ rc if rc else '' }}">
+    <input type="checkbox" name="{{ name }}" id="{{ name }}" value="on" {% if checked %}checked{% endif %} {{ "disabled" if disabled else "" }}>
+    <label for="{{ name }}" class="{{ lc if lc else '' }}">{{ label }}</label>
+    {{ render_errors(errors) }}
+  </div>
+{% endmacro %}
+
+{% macro render_input_field(field) %}
+  {% with value = field.data if field.data is not none else "" %}
+    <div class="form-group">
+      {{ render_input(field.name, value, field.label, errors=field.errors) }}
+    </div>
+  {% endwith %}
+{% endmacro %}
+
+{% macro render_password_field(field) %}
+  {% with value = "" %}
+    <div class="form-group">
+      {{ render_input(field.name, value, field.label, errors=field.errors, type="password") }}
+    </div>
+  {% endwith %}
+{% endmacro %}
+
+{% macro render_checkbox_field(field) %}
+  {% with value = field.data if field.data is not none else "" %}
+    <div class="form-group">
+      {{ render_checkbox(field.name, value, field.label, errors=field.errors) }}
+    </div>
+  {% endwith %}
+{% endmacro %}
+
+{% macro render_submit(cls="btn btn-info") %}
+  <input type="submit" class="{{ cls }}">
+{% endmacro %}
